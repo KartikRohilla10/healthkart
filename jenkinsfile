@@ -1,0 +1,28 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Remove Existing Directory') {
+            steps {
+                script {
+                    // Check if the directory exists before attempting to remove it
+                    if (fileExists("${WORKSPACE}/healthkart")) {
+                        sh "sudo rm -rf ${WORKSPACE}/healthkart"
+                    }
+                }
+            }
+        }
+        stage('Clone Repository') {
+            steps {
+                // Cloning the repository into the healthkart directory
+                sh "git clone https://github.com/kiteretsu01/healthkart.git ${WORKSPACE}/healthkart"
+            }
+        }
+        stage('Forward to Ubuntu') {
+            steps {
+                sh "sudo rm -rf /var/www/hello/"
+                sh "sudo cp -r ${WORKSPACE}/healthkart/ /var/www/hello/"
+            }
+        }
+    }
+}
